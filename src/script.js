@@ -20,7 +20,12 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const matCapTexture = textureLoader.load('textures/matcaps/2.png');
+const colorTexture = textureLoader.load('textures/Ice_001/Ice_001_COLOR.jpg');
+const normalTexture = textureLoader.load('textures/Ice_001/Ice_001_NRM.jpg');
+const occTexture = textureLoader.load('textures/Ice_001/Ice_001_OCC.jpg');
+const specTexture = textureLoader.load('textures/Ice_001/Ice_001_SPEC.jpg');
+const dispTexture = textureLoader.load('textures/Ice_001/Ice_001_DIPS.jpg');
+// const matCapTexture = textureLoader.load('textures/matcaps/3.png');
 const cloudTexture = textureLoader.load('textures/cloud.png');
 
 
@@ -50,17 +55,52 @@ for(let i=0; i<8000; i++) {
  * Fonts
  */
 const fontLoader = new FontLoader();
-const title = `Utkarsh
-and the
+const title = `Utkarsh`;
+const subTitle = `and the 
 Portfolio`;
+let titleObj = {
+    size: 5,
+    height:0.2,
+    curveSegments: 12,
+    bevelEnabled: true,
+    bevelThickness: 0.03,
+    bevelSize: 0.02,
+    bevelOffset: 0,
+    bevelSegments: 5
+}
 fontLoader.load('/fonts/Harry_P_Regular.json', (font) => {
 
-    console.log('font', font)
+    
     const nameText = new TextGeometry(
         title, {
             font,
-            size: 5,
-            height:0.2,
+            ...titleObj
+        }
+    );
+    const textMaterial = new THREE.MeshMatcapMaterial({
+         matcap: specTexture,
+        //  normalMap: normalTexture
+        });
+    const text1 = new THREE.Mesh(nameText, textMaterial);
+    
+    text1.scale.x = 2.5;
+    text1.scale.y = 2.5;
+    text1.position.z = 4000;
+    nameText.computeBoundingBox();
+    nameText.center();
+    scene.add(text1);
+    gui.add(text1.scale, 'x').min(1).max(5).step(0.1).name('titleX');
+    gui.add(text1.scale, 'y').min(1).max(5).step(0.1).name('titleY');
+    
+})
+
+fontLoader.load('/fonts/Lumos_Caps.json', (font) => {
+
+    const nameText = new TextGeometry(
+        subTitle, {
+            font,
+            size: 3,
+            height:0.1,
             curveSegments: 12,
             bevelEnabled: true,
             bevelThickness: 0.03,
@@ -69,32 +109,34 @@ fontLoader.load('/fonts/Harry_P_Regular.json', (font) => {
             bevelSegments: 5
         }
     );
-    const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matCapTexture});
+    const textMaterial = new THREE.MeshMatcapMaterial({ matcap: specTexture});
     const text1 = new THREE.Mesh(nameText, textMaterial);
     
-    text1.scale.x = 4
-    text1.scale.y = 4
+    text1.scale.x = 1
+    text1.scale.y = 1
+    text1.position.x = 22;
+    text1.position.y = -11.5;
     text1.position.z = 4000;
-    // text1.position.y = -Math.random() * (Math.random() * 200) / 2
-    // text1.position.z = 5000
-    // const text2 = new THREE.Mesh(secondLineText, textMaterial);
-    // const text3 = new THREE.Mesh(thirdLineText, textMaterial);
     nameText.computeBoundingBox();
     nameText.center();
-    scene.add(text1)
-
+    scene.add(text1);
+    // gui.add(text1.scale, 'x').min(1).max(5).step(0.1).name('subTextX');
+    // gui.add(text1.scale, 'y').min(1).max(5).step(0.1).name('subTextY');
+    gui.add(text1.position, 'x').min(-30).max(30).step(0.1).name('subTextPosX');
+    gui.add(text1.position, 'y').min(-50).max(10).step(0.1).name('subTextPosY');
+    
 })
 
 /**
  * Lights
  */
 const ambientLight = new THREE.AmbientLight(0x1D2430, 0.7);
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.01);
+// gui.add(ambientLight, 'intensity').min(0).max(1).step(0.01);
 
 let flash = new THREE.PointLight(0x7DF9FF, 0.5);
-gui.add(flash.position, 'x').min(-300).max(300).step(10);
-gui.add(flash.position, 'y').min(-300).max(300).step(10);
-gui.add(flash.position, 'z').min(-100).max(8000).step(100);
+// gui.add(flash.position, 'x').min(-300).max(300).step(10);
+// gui.add(flash.position, 'y').min(-300).max(300).step(10);
+// gui.add(flash.position, 'z').min(-100).max(8000).step(100);
 // flash.position.set(0, 0, 8000)
 
 scene.add(ambientLight,flash)
