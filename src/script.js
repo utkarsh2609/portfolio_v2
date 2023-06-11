@@ -4,6 +4,8 @@ import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import * as dat from "lil-gui";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { Water } from 'three/examples/jsm/objects/Water.js';
+
 
 /**
  * Base
@@ -20,6 +22,11 @@ const scene = new THREE.Scene();
 // Audio
 const thunder = new Audio("cloud_thunder.mpeg");
 
+// Ocean variables
+let oceanGeometry, oceanMaterial, oceanMesh;
+let water, sun, mesh;
+
+
 const playSound = () => {
   thunder.play();
 };
@@ -32,7 +39,7 @@ const colorTexture = textureLoader.load("textures/Ice_001/Ice_001_COLOR.jpg");
 const normalTexture = textureLoader.load("textures/Ice_001/Ice_001_NRM.jpg");
 const occTexture = textureLoader.load("textures/Ice_001/Ice_001_OCC.jpg");
 const specTexture = textureLoader.load("textures/Ice_001/Ice_001_SPEC.jpg");
-const dispTexture = textureLoader.load("textures/Ice_001/Ice_001_DIPS.jpg");
+// const dispTexture = textureLoader.load("textures/Ice_001/Ice_001_DIPS.jpg");
 // const matCapTexture = textureLoader.load('textures/matcaps/3.png');
 const cloudTexture = textureLoader.load("textures/cloud.png");
 
@@ -206,6 +213,51 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+
+// // Create the ocean
+function createOcean() {
+  // // Ocean geometry
+  // oceanGeometry = new THREE.PlaneGeometry(10, 10, 32, 32);
+  
+  // // Ocean material
+  // oceanMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: false });
+  
+  // // Ocean mesh
+  // oceanMesh = new THREE.Mesh(oceanGeometry, oceanMaterial);
+  // oceanMesh.rotation.x = Math.PI / 2;
+  // oceanMesh.position.y = -11.5
+
+  // scene.add(oceanMesh);
+
+  // Water
+
+  const waterGeometry = new THREE.PlaneGeometry( 10000, 10000 );
+
+  water = new Water(
+    waterGeometry,
+    {
+      textureWidth: 512,
+      textureHeight: 512,
+      waterNormals: new THREE.TextureLoader().load( 'textures/waternormals.jpg', function ( texture ) {
+
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+      } ),
+      sunDirection: new THREE.Vector3(),
+      sunColor: 0xffffff,
+      waterColor: 0x001e0f,
+      distortionScale: 3.7,
+      fog: scene.fog !== undefined
+    }
+  );
+
+  water.rotation.x = - Math.PI / 2;
+  water.position.y = -200;
+  // water.material.uniforms[ 'sunDirection' ].value.copy( sun ).normalize();
+
+  scene.add( water );
+}
+
 /**
  * Animate
  */
@@ -224,12 +276,16 @@ const tick = () => {
 
   // Update controls
   controls.update();
+  // Rotate the ocean mesh
+  // water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+
+  // oceanMesh.rotation.z += 0.005;
   // camera.position.z -= elapsedTime * 0.01;
 
   if (Math.random() > 0.98) {
     flash.power = Math.random() * 10 + 50;
     flash.position.z = Math.random() * 4000;
-    console.log(flash.power);
+    // console.log(flash.power);
     playSound();
   }
 
@@ -241,3 +297,4 @@ const tick = () => {
 };
 
 tick();
+createOcean();
