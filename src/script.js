@@ -42,6 +42,7 @@ const specTexture = textureLoader.load("textures/Ice_001/Ice_001_SPEC.jpg");
 // const dispTexture = textureLoader.load("textures/Ice_001/Ice_001_DIPS.jpg");
 // const matCapTexture = textureLoader.load('textures/matcaps/3.png');
 const cloudTexture = textureLoader.load("textures/cloud.png");
+const hogwartsTexture = textureLoader.load("textures/hogwarts.png");
 
 // Clouds
 // const cloudGeometry = new THREE.BoxGeometry(2,2,2);
@@ -257,6 +258,19 @@ function createOcean() {
 
   scene.add( water );
 }
+
+// hogwarts
+
+const hogwartsGeometry = new THREE.PlaneGeometry(40, 40);
+const hogwartsMaterial = new THREE.MeshLambertMaterial({
+  map: hogwartsTexture,
+  transparent: true,
+  opacity: 0.5,
+});
+const hogwarts = new THREE.Mesh(hogwartsGeometry, hogwartsMaterial);
+
+scene.add(hogwarts);
+
 
 /**
  * Animate
